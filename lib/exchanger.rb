@@ -82,11 +82,12 @@ require "exchanger/operations/get_user_configuration"
 
 module Exchanger
   NS = {
-    "xsi"  => "http://www.w3.org/2001/XMLSchema-instance",
-    "xsd"  => "http://www.w3.org/2001/XMLSchema",
-    "soap" => "http://schemas.xmlsoap.org/soap/envelope/",
-    "m"    => "http://schemas.microsoft.com/exchange/services/2006/messages",
-    "t"    => "http://schemas.microsoft.com/exchange/services/2006/types"
+    "xsi"     => "http://www.w3.org/2001/XMLSchema-instance",
+    "xsd"     => "http://www.w3.org/2001/XMLSchema",
+    "soap"    => "http://schemas.xmlsoap.org/soap/envelope/",
+    "m"       => "http://schemas.microsoft.com/exchange/services/2006/messages",
+    "t"       => "http://schemas.microsoft.com/exchange/services/2006/types",
+    "version" => 'Exchange2016'
   }
 
   class << self

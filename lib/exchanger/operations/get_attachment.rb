@@ -13,18 +13,14 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"]) do
-            xml.send("soap:Body") do
-              xml.GetAttachment("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
-                xml.AttachmentShape do
-                  xml.send "t:BaseShape", base_shape.to_s.camelize
-                end
-                xml.AttachmentIds do
-                  attachment_ids.each do |attachment_id|
-                    xml.send("t:AttachmentId", "Id" => attachment_id)
-                  end
-                end
+        super do |xml|
+          xml.GetAttachment("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
+            xml.AttachmentShape do
+              xml.send "t:BaseShape", base_shape.to_s.camelize
+            end
+            xml.AttachmentIds do
+              attachment_ids.each do |attachment_id|
+                xml.send("t:AttachmentId", "Id" => attachment_id)
               end
             end
           end

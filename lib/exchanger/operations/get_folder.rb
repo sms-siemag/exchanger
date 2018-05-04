@@ -1,6 +1,6 @@
 module Exchanger
   # The GetFolder operation gets folders from the Exchanger store.
-  # 
+  #
   # http://msdn.microsoft.com/en-us/library/aa580274.aspx
   class GetFolder < Operation
     class Request < Operation::Request
@@ -14,27 +14,23 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"]) do
-            xml.send("soap:Body") do
-              xml.GetFolder("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
-                xml.FolderShape do
-                  xml.send "t:BaseShape", base_shape.to_s.camelize
-                end
-                xml.FolderIds do
-                  folder_ids.each do |folder_id|
-                    if folder_id.is_a?(Symbol)
-                      xml.send("t:DistinguishedFolderId", "Id" => folder_id) do
-                        if email_address
-                          xml.send("t:Mailbox") do
-                            xml.send("t:EmailAddress", email_address)
-                          end
-                        end
+        super do |xml|
+          xml.GetFolder do
+            xml.FolderShape do
+              xml.send "t:BaseShape", base_shape.to_s.camelize
+            end
+            xml.FolderIds do
+              folder_ids.each do |folder_id|
+                if folder_id.is_a?(Symbol)
+                  xml.send("t:DistinguishedFolderId", "Id" => folder_id) do
+                    if email_address
+                      xml.send("t:Mailbox") do
+                        xml.send("t:EmailAddress", email_address)
                       end
-                    else
-                      xml.send("t:FolderId", "Id" => folder_id)
                     end
                   end
+                else
+                  xml.send("t:FolderId", "Id" => folder_id)
                 end
               end
             end

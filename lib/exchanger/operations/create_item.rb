@@ -22,31 +22,27 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"], "xmlns:t" => NS["t"], "xmlns:xsi" => NS["xsi"], "xmlns:xsd" => NS["xsd"]) do
-            xml.send("soap:Body") do
-              xml.CreateItem(create_item_attributes) do
-                xml.SavedItemFolderId do
-                  if folder_id.is_a?(Symbol)
-                    xml.send("t:DistinguishedFolderId", "Id" => folder_id) do
-                      if email_address
-                        xml.send("t:Mailbox") do
-                          xml.send("t:EmailAddress", email_address)
-                        end
-                      end
+        super do |xml|
+          xml.CreateItem(create_item_attributes) do
+            xml.SavedItemFolderId do
+              if folder_id.is_a?(Symbol)
+                xml.send("t:DistinguishedFolderId", "Id" => folder_id) do
+                  if email_address
+                    xml.send("t:Mailbox") do
+                      xml.send("t:EmailAddress", email_address)
                     end
-                  else
-                    xml.send("t:FolderId", "Id" => folder_id)
                   end
                 end
-                xml.Items do
-                  items.each do |item|
-                    item_xml = item.to_xml
-                    item_xml.add_namespace_definition("t", NS["t"])
-                    item_xml.namespace = item_xml.namespace_definitions[0]
-                    xml << item_xml.to_s
-                  end
-                end
+              else
+                xml.send("t:FolderId", "Id" => folder_id)
+              end
+            end
+            xml.Items do
+              items.each do |item|
+                item_xml = item.to_xml
+                item_xml.add_namespace_definition("t", NS["t"])
+                item_xml.namespace = item_xml.namespace_definitions[0]
+                xml << item_xml.to_s
               end
             end
           end

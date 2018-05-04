@@ -19,15 +19,11 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"], "xmlns:t" => NS["t"], "xmlns:xsi" => NS["xsi"], "xmlns:xsd" => NS["xsd"]) do
-            xml.send("soap:Body") do
-              xml.DeleteItem(delete_item_attributes) do
-                xml.ItemIds do
-                  item_ids.each do |item_id|
-                    xml["t"].ItemId("Id" => item_id)
-                  end
-                end
+        super do |xml|
+          xml.DeleteItem(delete_item_attributes) do
+            xml.ItemIds do
+              item_ids.each do |item_id|
+                xml["t"].ItemId("Id" => item_id)
               end
             end
           end

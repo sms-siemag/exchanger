@@ -1,6 +1,6 @@
 module Exchanger
   # The ExpandDL operation exposes the full membership of distribution lists.
-  # 
+  #
   # http://msdn.microsoft.com/en-us/library/aa494152.aspx
   class ExpandDL < Operation
     class Request < Operation::Request
@@ -12,17 +12,13 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"]) do
-            xml.send("soap:Body") do
-              xml.ExpandDL("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
-                xml.Mailbox do
-                  if mailbox.item_id
-                    xml.send("t:ItemId", "Id" => mailbox.item_id.id, "ChangeKey" => mailbox.item_id.change_key)
-                  else
-                    xml.send("t:EmailAddress", mailbox.email_address)
-                  end
-                end
+        super do |xml|
+          xml.ExpandDL("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
+            xml.Mailbox do
+              if mailbox.item_id
+                xml.send("t:ItemId", "Id" => mailbox.item_id.id, "ChangeKey" => mailbox.item_id.change_key)
+              else
+                xml.send("t:EmailAddress", mailbox.email_address)
               end
             end
           end

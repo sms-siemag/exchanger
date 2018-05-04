@@ -1,6 +1,6 @@
 module Exchanger
   # Getting User Availability
-  # 
+  #
   # http://msdn.microsoft.com/en-us/library/aa494212(v=exchg.80)
   class GetUserAvailability < Operation
     class Request < Operation::Request
@@ -30,52 +30,48 @@ module Exchanger
         start_date_time = start_time.strftime("%Y-%m-%dT%H:%M:%S")
         end_date_time = end_time.strftime("%Y-%m-%dT%H:%M:%S")
 
-        Nokogiri::XML::Builder.new do |xml|
-           xml.send("soap:Envelope", "xmlns:xsi" => NS["xsi"], "xmlns:xsd" => NS["xsd"], "xmlns:soap" => NS["soap"], "xmlns:t" => NS["t"], "xmlns:m" => NS["m"]) do
-             xml.send("soap:Body") do
-               xml.send("m:GetUserAvailabilityRequest") do
-                 xml.send("t:TimeZone") do
-                   xml.send("t:Bias", (minutes_of_utc_offset * -1))
-                   # if daylight savings time is active for current time zone
-                   # How to find correct standard time and daylight saving time configuration
-                   if current_tz.dst?
-                     xml.send("t:StandardTime") do
-                       xml.send("t:Bias", 0)
-                       xml.send("t:Time", "04:00:00")
-                       xml.send("t:DayOrder", 5)
-                       xml.send("t:Month", 10)
-                       xml.send("t:DayOfWeek", "Sunday")
-                     end
-                     xml.send("t:DaylightTime") do
-                       xml.send("t:Bias", (minutes_of_std_offset * -1))
-                       xml.send("t:Time", "03:00:00")
-                       xml.send("t:DayOrder", 5)
-                       xml.send("t:Month", 3)
-                       xml.send("t:DayOfWeek", "Sunday")
-                     end
-                   end
-                 end
-                 xml.send("m:MailboxDataArray") do
-                   xml.send("t:MailboxData") do
-                     xml.send("t:Email") do
-                       xml.send("t:Address", email_address)
-                     end
-                     xml.send("t:AttendeeType", "Required")
-                     xml.send("t:ExcludeConflicts", "false")
-                   end
-                 end
-                 xml.send("t:FreeBusyViewOptions") do
-                   xml.send("t:TimeWindow") do
-                     xml.send("t:StartTime", start_date_time)
-                     xml.send("t:EndTime", end_date_time)
-                   end
-                   xml.send("t:MergedFreeBusyIntervalInMinutes", 60)
-                   xml.send("t:RequestedView", "DetailedMerged")
-                 end
-               end
-             end
-           end
-         end
+        super do |xml|
+          xml.send("m:GetUserAvailabilityRequest") do
+            xml.send("t:TimeZone") do
+              xml.send("t:Bias", (minutes_of_utc_offset * -1))
+              # if daylight savings time is active for current time zone
+              # How to find correct standard time and daylight saving time configuration
+              if current_tz.dst?
+                xml.send("t:StandardTime") do
+                  xml.send("t:Bias", 0)
+                  xml.send("t:Time", "04:00:00")
+                  xml.send("t:DayOrder", 5)
+                  xml.send("t:Month", 10)
+                  xml.send("t:DayOfWeek", "Sunday")
+                end
+                xml.send("t:DaylightTime") do
+                  xml.send("t:Bias", (minutes_of_std_offset * -1))
+                  xml.send("t:Time", "03:00:00")
+                  xml.send("t:DayOrder", 5)
+                  xml.send("t:Month", 3)
+                  xml.send("t:DayOfWeek", "Sunday")
+                end
+              end
+            end
+            xml.send("m:MailboxDataArray") do
+              xml.send("t:MailboxData") do
+                xml.send("t:Email") do
+                  xml.send("t:Address", email_address)
+                end
+                xml.send("t:AttendeeType", "Required")
+                xml.send("t:ExcludeConflicts", "false")
+              end
+            end
+            xml.send("t:FreeBusyViewOptions") do
+              xml.send("t:TimeWindow") do
+                xml.send("t:StartTime", start_date_time)
+                xml.send("t:EndTime", end_date_time)
+              end
+              xml.send("t:MergedFreeBusyIntervalInMinutes", 60)
+              xml.send("t:RequestedView", "DetailedMerged")
+            end
+          end
+        end
       end
     end
 

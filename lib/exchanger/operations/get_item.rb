@@ -1,6 +1,6 @@
 module Exchanger
   # The GetItem operation gets items from the Exchanger store.
-  # 
+  #
   # http://msdn.microsoft.com/en-us/library/aa565934.aspx
   class GetItem < Operation
     class Request < Operation::Request
@@ -13,18 +13,14 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"]) do
-            xml.send("soap:Body") do
-              xml.GetItem("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
-                xml.ItemShape do
-                  xml.send "t:BaseShape", base_shape.to_s.camelize
-                end
-                xml.ItemIds do
-                  item_ids.each do |item_id|
-                    xml.send("t:ItemId", "Id" => item_id)
-                  end
-                end
+        super do |xml|
+          xml.GetItem("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
+            xml.ItemShape do
+              xml.send "t:BaseShape", base_shape.to_s.camelize
+            end
+            xml.ItemIds do
+              item_ids.each do |item_id|
+                xml.send("t:ItemId", "Id" => item_id)
               end
             end
           end

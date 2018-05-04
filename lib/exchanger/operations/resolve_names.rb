@@ -1,6 +1,6 @@
 module Exchanger
   # The ResolveNames operation resolves ambiguous e-mail addresses and display names.
-  # 
+  #
   # http://msdn.microsoft.com/en-us/library/aa563518.aspx
   class ResolveNames < Operation
     class Request < Operation::Request
@@ -12,13 +12,9 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"]) do
-            xml.send("soap:Body") do
-              xml.ResolveNames("xmlns" => NS["m"], "xmlns:t" => NS["t"], "ReturnFullContactData" => "true") do
-                xml.UnresolvedEntry name
-              end
-            end
+        super do |xml|
+          xml.ResolveNames("xmlns" => NS["m"], "xmlns:t" => NS["t"], "ReturnFullContactData" => "true") do
+            xml.UnresolvedEntry name
           end
         end
       end

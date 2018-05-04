@@ -1,5 +1,5 @@
 module Exchanger
-  # The FindFolder operation uses Exchanger Web Services to find subfolders of 
+  # The FindFolder operation uses Exchanger Web Services to find subfolders of
   # an identified folder and returns a set of properties that describe the set of subfolders.
   #
   # http://msdn.microsoft.com/en-us/library/aa563918.aspx
@@ -16,8 +16,34 @@ module Exchanger
       end
 
       def to_xml
+        super do |xml|
+          xml.FindFolder("xmlns" => NS["m"], "xmlns:t" => NS["t"], "Traversal" => traversal.to_s.camelize) do
+            xml.FolderShape do
+              xml.send "t:BaseShape", base_shape.to_s.camelize
+            end
+            xml.ParentFolderIds do
+              if parent_folder_id.is_a?(Symbol)
+                xml.send("t:DistinguishedFolderId", "Id" => parent_folder_id) do
+                  if email_address
+                    xml.send("t:Mailbox") do
+                      xml.send("t:EmailAddress", email_address)
+                    end
+                  end
+                end
+              else
+                xml.send("t:FolderId", "Id" => parent_folder_id)
+              end
+            end
+          end
+        end
+      end
+
+      def to_xml_old
         Nokogiri::XML::Builder.new do |xml|
           xml.send("soap:Envelope", "xmlns:soap" => NS["soap"]) do
+            xml.send("soap:Header") do
+              xml.send("t:RequestServerVersion", "Version" => NS["version"])
+            end
             xml.send("soap:Body") do
               xml.FindFolder("xmlns" => NS["m"], "xmlns:t" => NS["t"], "Traversal" => traversal.to_s.camelize) do
                 xml.FolderShape do

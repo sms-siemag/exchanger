@@ -13,18 +13,14 @@ module Exchanger
       end
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"], "xmlns:t" => NS["t"], "xmlns:xsi" => NS["xsi"], "xmlns:xsd" => NS["xsd"]) do
-            xml.send("soap:Body") do
-              xml.UpdateItem(update_item_attributes) do
-                xml.ItemChanges do
-                  items.each do |item|
-                    item_change = item.to_xml_change
-                    item_change.add_namespace_definition("t", NS["t"])
-                    item_change.namespace = item_change.namespace_definitions[0]
-                    xml << item_change.to_s
-                  end
-                end
+        super do |xml|
+          xml.UpdateItem(update_item_attributes) do
+            xml.ItemChanges do
+              items.each do |item|
+                item_change = item.to_xml_change
+                item_change.add_namespace_definition("t", NS["t"])
+                item_change.namespace = item_change.namespace_definitions[0]
+                xml << item_change.to_s
               end
             end
           end

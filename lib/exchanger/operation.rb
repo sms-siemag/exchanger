@@ -3,7 +3,7 @@ module Exchanger
   #
   # Exchange Web Services provides many operations that enable you to access
   # information from the Exchanger store.
-  # 
+  #
   # http://msdn.microsoft.com/en-us/library/bb409286.aspx
   class Operation
     attr_reader :options, :request, :response
@@ -54,7 +54,20 @@ module Exchanger
       end
 
       def to_xml
-        raise "NotImplemented"
+        Nokogiri::XML::Builder.new do |xml|
+          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"], "xmlns:t" => NS["t"], "xmlns:xsi" => NS["xsi"], "xmlns:xsd" => NS["xsd"]) do
+            xml.send("soap:Header") do
+              xml.send("t:RequestServerVersion", "Version" => NS['version'])
+            end
+            xml.send("soap:Body") do
+              if block_given?
+                yield xml
+              else
+                raise "NotImplemented"
+              end
+            end
+          end
+        end
       end
     end
 

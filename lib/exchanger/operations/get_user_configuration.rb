@@ -7,16 +7,12 @@ module Exchanger
       attr_accessor :folder_id, :user_configuration_name
 
       def to_xml
-        Nokogiri::XML::Builder.new do |xml|
-          xml.send("soap:Envelope", "xmlns:soap" => NS["soap"]) do
-            xml.send("soap:Body") do
-              xml.GetUserConfiguration("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
-                xml.send("UserConfigurationName", "Name" => user_configuration_name) do
-                  xml.send("t:FolderId", "Id" => folder_id)
-                end
-                xml.send "UserConfigurationProperties", "All"
-              end
+        super do |xml|
+          xml.GetUserConfiguration("xmlns" => NS["m"], "xmlns:t" => NS["t"]) do
+            xml.send("UserConfigurationName", "Name" => user_configuration_name) do
+              xml.send("t:FolderId", "Id" => folder_id)
             end
+            xml.send "UserConfigurationProperties", "All"
           end
         end
       end
