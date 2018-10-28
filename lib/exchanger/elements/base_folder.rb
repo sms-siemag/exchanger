@@ -32,8 +32,8 @@ module Exchanger
       response.folders
     end
 
-    def self.find_all_by_parent_id(parent_id)
-      response = FindFolder.run(:parent_folder_id => parent_id)
+    def self.find_all_by_parent_id(parent_id, email_address = nil)
+      response = FindFolder.run(:parent_folder_id => parent_id, :email_address => email_address)
       response.folders
     end
 
