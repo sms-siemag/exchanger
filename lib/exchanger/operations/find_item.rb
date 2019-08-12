@@ -4,7 +4,7 @@ module Exchanger
   # http://msdn.microsoft.com/en-us/library/aa566107.aspx
   class FindItem < Operation
     class Request < Operation::Request
-      attr_accessor :folder_id, :traversal, :base_shape, :email_address, :calendar_view
+      attr_accessor :folder_id, :traversal, :base_shape, :email_address, :calendar_view, :max_entries_returned, :offset, :base_point
 
       # Reset request options to defaults.
       def reset
@@ -13,6 +13,9 @@ module Exchanger
         @base_shape = :all_properties
         @email_address = nil
         @calendar_view = nil
+        @max_entries_returned = nil
+        @offset = 0
+        @base_point = :Beginning
       end
 
       def to_xml
@@ -23,6 +26,9 @@ module Exchanger
             end
             if calendar_view
               xml.CalendarView(calendar_view.to_xml.attributes)
+            end
+            if max_entries_returned.present? or offset.present? or base_point.present?
+              xml.IndexedPageItemView(indexed_page_item_view)
             end
             xml.ParentFolderIds do
               if folder_id.is_a?(Symbol)
@@ -39,6 +45,14 @@ module Exchanger
             end
           end
         end
+      end
+
+    private
+      def indexed_page_item_view
+        hItem = {'Offset' => offset, 'BasePoint' => base_point}
+        hItem['MaxEntriesReturned'] = max_entries_returned if max_entries_returned
+
+        hItem
       end
     end
 

@@ -52,10 +52,21 @@ module Exchanger
       end
     end
 
-    def items
-      Item.find_all_by_folder_id(id).each do |item|
-        item.parent_folder = self
+    def items(options={})
+      aItems  = []
+      iTotal  = total_count
+      iPos    = options[:offset]||options['offset']||0
+
+      while iPos < iTotal
+        options[:offset] = iPos
+        aReturn = Item.find_all_by_folder_id(id, nil, options).each do |item|
+          item.parent_folder = self
+        end
+        aItems += aReturn
+        iPos   += aReturn.count
       end
+
+      aItems
     end
 
     # Return items (also recurring calendar items) based on
