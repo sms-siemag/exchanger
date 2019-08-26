@@ -154,8 +154,10 @@ module Exchanger
         # Delete removed phone numbers, etc
         if changes.include?(name.to_s) && value.is_a?(Array)
           old_values, new_values = changes[name.to_s]
-          deleted_values = (old_values||[]) - (new_values||[])
-          field.to_xml_updates(deleted_values) do |field_uri_xml, _|
+          new_values = (new_values||[]).collect{|i| i.key}
+
+          deleted_values = (old_values||[]).inject([]){|a, i| a<<i unless i.key.in?(new_values)}
+          field.to_xml_updates(deleted_values||[]) do |field_uri_xml, _|
             delete_item_field = doc.create_element("DeleteItemField")
             delete_item_field << field_uri_xml
             root << delete_item_field
