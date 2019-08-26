@@ -54,14 +54,21 @@ module Exchanger
 
     def items(options={})
       aItems  = []
-      iTotal  = total_count
       iPos    = options[:offset]||options['offset']||0
+      iTotal  = total_count
+      iEnd    = if options.keys.include?(:max_entries_returned) or options.keys.include?('max_entries_returned')
+                  iPos + (options[:max_entries_returned]||options['max_entries_returned'])
 
-      while iPos < iTotal
+                else
+                  iTotal
+                end
+
+      while iPos < iEnd and iPos < iTotal
         options[:offset] = iPos
         aReturn = Item.find_all_by_folder_id(id, nil, options).each do |item|
           item.parent_folder = self
         end
+
         aItems += aReturn
         iPos   += aReturn.count
       end
